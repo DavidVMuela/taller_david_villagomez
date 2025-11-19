@@ -61,3 +61,13 @@ jobs:
             whoami
             hostname
             uptime
+
+    - name: Pasar el stack.yml al servidor
+      uses: appleboy/ssh-action@v1
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        port: ${{ secrets.VPS_SSH_PORT }}
+        username: ${{ secrets.VPS_USER }}
+        password: ${{ secrets.VPS_PASSWORD }}
+        source: "./stack.yml"
+        target: "/home/${{ secrets.VPS_USER }}/automatizar"
