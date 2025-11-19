@@ -72,14 +72,29 @@ jobs:
         source: "./stack.yml"
         target: "/home/${{ secrets.VPS_USER }}/automatizar"
     
-    - name: Deploy del servicio
+    - name: Deploy del servidor 
       uses: appleboy/ssh-action@v1
       with:
-        host: ${{ secrets.VPS_HOST }}
-        port: ${{ secrets.VPS_SSH_PORT }}
-        username: ${{ secrets.VPS_USER }}
-        password: ${{ secrets.VPS_PASSWORD }}
-        script: |
-            echo "Deployando servicios"
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ secrets.VPS_SSH_PORT }}
+          script: |
+              echo "Deployando los servicios"
 
-            docker pull ghcr.io/davidvmuela/david:1.0.1
+              cd ~/automatizar
+              
+              echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u davidvmuela --password-stdin
+              docker pull ghcr.io/davidvmuela/david:1.0.1
+
+              # Borar el stack quintob
+              docker stack rm quintob || true
+
+              # Tiempo de espera hasta que baje los servicios
+              sleep 30
+
+              docker stack deploy --with-registry-auth -c stack.yml quintob
+
+              sleep 30
+              #Ver los servicios
+              docker ps
