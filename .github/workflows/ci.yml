@@ -47,7 +47,6 @@ jobs:
         push: true
         tags: |
           ghcr.io/davidvmuela/david:1.0.1
-          ghcr.io/davidvmuela/david:latest
         
     - name: Pruebas de ssh con el servidor
       uses: appleboy/ssh-action@v1
